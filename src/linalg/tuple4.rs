@@ -1,5 +1,5 @@
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct Tuple4(pub f64, pub f64, pub f64, pub f64);
 
 impl Tuple4 {
