@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use cucumber::{given, then, World};
 use futures::FutureExt;
-use raytracer::linalg::tuple4::Tuple4;
+use raytracer::linalg::tuple4::{point, Tuple4, vector};
 
 #[derive(Debug, Default, World)]
 pub struct RaytracerWorld {
@@ -18,6 +18,18 @@ impl RaytracerWorld {
 fn given_a_tuple(world: &mut RaytracerWorld, variable: String, x: f64, y: f64, z: f64, w: f64) {
     let tuple = Tuple4(x, y, z, w);
     world.tuples.insert(variable, tuple);
+}
+
+#[given(expr = "{word} ← point\\({float}, {float}, {float})")]
+fn given_a_point(world: &mut RaytracerWorld, variable: String, x: f64, y: f64, z: f64) {
+    let point = point(x, y, z);
+    world.tuples.insert(variable, point);
+}
+
+#[given(expr = "{word} ← vector\\({float}, {float}, {float})")]
+fn given_a_vector(world: &mut RaytracerWorld, variable: String, x: f64, y: f64, z: f64) {
+    let point = vector(x, y, z);
+    world.tuples.insert(variable, point);
 }
 
 #[then(expr = "{word}.x = {float}")]
@@ -66,6 +78,13 @@ fn is_a_vector(world: &mut RaytracerWorld, variable: String) {
 fn is_not_a_vector(world: &mut RaytracerWorld, variable: String) {
     let tuple = world.get_tuple(variable);
     assert!(!tuple.is_vector())
+}
+
+#[then(expr = "{word} = tuple\\({float}, {float}, {float}, {float})")]
+fn tuple_is_equal_to(world: &mut RaytracerWorld, variable: String, x: f64, y: f64, z: f64, w: f64) {
+    let tuple1 = world.get_tuple(variable);
+    let tuple2 = Tuple4(x, y, z, w);
+    assert_eq!(*tuple1, tuple2);
 }
 
 fn main() {
