@@ -87,6 +87,22 @@ fn tuple_is_equal_to(world: &mut RaytracerWorld, variable: String, x: f64, y: f6
     assert_eq!(*tuple1, tuple2);
 }
 
+#[then(expr = "{word} + {word} = tuple\\({float}, {float}, {float}, {float})")]
+fn tuple_sum_is_equal_to(world: &mut RaytracerWorld, variable1: String, variable2: String, x: f64, y: f64, z: f64, w: f64) {
+    let tuple1 = world.get_tuple(variable1);
+    let tuple2 = world.get_tuple(variable2);
+    let expected = Tuple4(x, y, z, w);
+    assert_eq!(tuple1.clone() + tuple2.clone(), expected);
+}
+
+#[then(expr = "{word} - {word} = tuple\\({float}, {float}, {float}, {float})")]
+fn tuple_sub_is_equal_to(world: &mut RaytracerWorld, variable1: String, variable2: String, x: f64, y: f64, z: f64, w: f64) {
+    let tuple1 = world.get_tuple(variable1);
+    let tuple2 = world.get_tuple(variable2);
+    let expected = Tuple4(x, y, z, w);
+    assert_eq!(tuple1.clone() - tuple2.clone(), expected);
+}
+
 fn main() {
     futures::executor::block_on(RaytracerWorld::cucumber()
         .before(|_feature, _rule, _scenario, world| {
