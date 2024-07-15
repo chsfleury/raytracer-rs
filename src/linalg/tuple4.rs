@@ -1,4 +1,4 @@
-use std::ops::{Add, Sub};
+use std::ops::{Add, Neg, Sub};
 use crate::linalg::math;
 
 #[derive(Debug, Default, Clone, PartialEq)]
@@ -44,6 +44,14 @@ impl Sub for Tuple4 {
             self.2 - other.2,
             self.3 - other.3,
         )
+    }
+}
+
+impl Neg for Tuple4 {
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        Self(-self.0, -self.1, -self.2, -self.3)
     }
 }
 

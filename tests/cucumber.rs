@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::ops::Neg;
 use cucumber::{given, then, World};
 use futures::FutureExt;
 use raytracer::linalg::tuple4::{point, Tuple4, vector};
@@ -9,8 +10,13 @@ pub struct RaytracerWorld {
 }
 
 impl RaytracerWorld {
-    pub fn get_tuple(&self, variable: String) -> &Tuple4 {
-        return self.tuples.get(&variable).unwrap();
+    pub fn get_tuple(&self, variable: String) -> Tuple4 {
+        return if variable.starts_with('-') {
+            let var: String = variable.chars().skip(1).collect();
+            self.tuples.get(&var).unwrap().clone().neg()
+        } else {
+            self.tuples.get(&variable).unwrap().clone()
+        };
     }
 }
 
@@ -81,14 +87,28 @@ fn is_not_a_vector(world: &mut RaytracerWorld, variable: String) {
 }
 
 #[then(expr = "{word} = tuple\\({float}, {float}, {float}, {float})")]
-fn tuple_is_equal_to(world: &mut RaytracerWorld, variable: String, x: f64, y: f64, z: f64, w: f64) {
+fn is_equal_to_tuple(world: &mut RaytracerWorld, variable: String, x: f64, y: f64, z: f64, w: f64) {
     let tuple1 = world.get_tuple(variable);
     let tuple2 = Tuple4(x, y, z, w);
-    assert_eq!(*tuple1, tuple2);
+    assert_eq!(tuple1, tuple2);
+}
+
+#[then(expr = "{word} = point\\({float}, {float}, {float})")]
+fn is_equal_to_point(world: &mut RaytracerWorld, variable: String, x: f64, y: f64, z: f64) {
+    let tuple1 = world.get_tuple(variable);
+    let tuple2 = point(x, y, z);
+    assert_eq!(tuple1, tuple2);
+}
+
+#[then(expr = "{word} = vector\\({float}, {float}, {float})")]
+fn is_equal_to_vector(world: &mut RaytracerWorld, variable: String, x: f64, y: f64, z: f64) {
+    let tuple1 = world.get_tuple(variable);
+    let tuple2 = vector(x, y, z);
+    assert_eq!(tuple1, tuple2);
 }
 
 #[then(expr = "{word} + {word} = tuple\\({float}, {float}, {float}, {float})")]
-fn tuple_sum_is_equal_to(world: &mut RaytracerWorld, variable1: String, variable2: String, x: f64, y: f64, z: f64, w: f64) {
+fn sum_is_equal_to_tuple(world: &mut RaytracerWorld, variable1: String, variable2: String, x: f64, y: f64, z: f64, w: f64) {
     let tuple1 = world.get_tuple(variable1);
     let tuple2 = world.get_tuple(variable2);
     let expected = Tuple4(x, y, z, w);
@@ -96,10 +116,26 @@ fn tuple_sum_is_equal_to(world: &mut RaytracerWorld, variable1: String, variable
 }
 
 #[then(expr = "{word} - {word} = tuple\\({float}, {float}, {float}, {float})")]
-fn tuple_sub_is_equal_to(world: &mut RaytracerWorld, variable1: String, variable2: String, x: f64, y: f64, z: f64, w: f64) {
+fn sub_is_equal_to_tuple(world: &mut RaytracerWorld, variable1: String, variable2: String, x: f64, y: f64, z: f64, w: f64) {
     let tuple1 = world.get_tuple(variable1);
     let tuple2 = world.get_tuple(variable2);
     let expected = Tuple4(x, y, z, w);
+    assert_eq!(tuple1.clone() - tuple2.clone(), expected);
+}
+
+#[then(expr = "{word} - {word} = point\\({float}, {float}, {float})")]
+fn sub_is_equal_to_point(world: &mut RaytracerWorld, variable1: String, variable2: String, x: f64, y: f64, z: f64) {
+    let tuple1 = world.get_tuple(variable1);
+    let tuple2 = world.get_tuple(variable2);
+    let expected = point(x, y, z);
+    assert_eq!(tuple1.clone() - tuple2.clone(), expected);
+}
+
+#[then(expr = "{word} - {word} = vector\\({float}, {float}, {float})")]
+fn sub_is_equal_to_vector(world: &mut RaytracerWorld, variable1: String, variable2: String, x: f64, y: f64, z: f64) {
+    let tuple1 = world.get_tuple(variable1);
+    let tuple2 = world.get_tuple(variable2);
+    let expected = vector(x, y, z);
     assert_eq!(tuple1.clone() - tuple2.clone(), expected);
 }
 
