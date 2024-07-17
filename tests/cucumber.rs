@@ -139,6 +139,20 @@ fn sub_is_equal_to_vector(world: &mut RaytracerWorld, variable1: String, variabl
     assert_eq!(tuple1.clone() - tuple2.clone(), expected);
 }
 
+#[then(expr = "{word} * {float} = tuple\\({float}, {float}, {float}, {float})")]
+fn mul_scalar_is_equal_to_vector(world: &mut RaytracerWorld, variable: String, a: f64, x: f64, y: f64, z: f64, w: f64) {
+    let tuple = world.get_tuple(variable);
+    let expected = Tuple4(x, y, z, w);
+    assert_eq!(tuple.clone() * a, expected);
+}
+
+#[then(expr = "{word} \\/ {float} = tuple\\({float}, {float}, {float}, {float})")]
+fn div_scalar_is_equal_to_vector(world: &mut RaytracerWorld, variable: String, a: f64, x: f64, y: f64, z: f64, w: f64) {
+    let tuple = world.get_tuple(variable);
+    let expected = Tuple4(x, y, z, w);
+    assert_eq!(tuple.clone() / a, expected);
+}
+
 fn main() {
     futures::executor::block_on(RaytracerWorld::cucumber()
         .before(|_feature, _rule, _scenario, world| {

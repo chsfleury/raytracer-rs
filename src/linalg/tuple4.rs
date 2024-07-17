@@ -1,4 +1,4 @@
-use std::ops::{Add, Neg, Sub};
+use std::ops::{Add, Div, Mul, Neg, Sub};
 use crate::linalg::math;
 
 #[derive(Debug, Default, Clone, PartialEq)]
@@ -52,6 +52,22 @@ impl Neg for Tuple4 {
 
     fn neg(self) -> Self::Output {
         Self(-self.0, -self.1, -self.2, -self.3)
+    }
+}
+
+impl Mul<f64> for Tuple4 {
+    type Output = Self;
+
+    fn mul(self, a: f64) -> Self::Output {
+        Self(self.0 * a, self.1 * a, self.2 * a, self.3 * a)
+    }
+}
+
+impl Div<f64> for Tuple4 {
+    type Output = Self;
+
+    fn div(self, a: f64) -> Self::Output {
+        Self(self.0 / a, self.1 / a, self.2 / a, self.3 / a)
     }
 }
 
